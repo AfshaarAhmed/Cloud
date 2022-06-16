@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:latest
+    env_file: 
+      - db.env
+  api:
+    depends_on:
+      - postgres
+    build:
+     dockerfile: Dockerfile 
+     context: ./backend/auth
+    ports:
+      - 4000:4000
+    volumes:
+      - /app/node_modules
+      - ./backend/auth:/app
+  client:
+    depends_on:
+      - api
+    build: 
+      dockerfile: Dockerfile
+      context: ./client
+    ports:
+      - 3000:80
+    volumes:
+     - ./client:/app
+
+  nginx:
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    restart: always
+    depends_on:
+      - client
+      - api
+  adminer:
+    container_name: adminer
+    depends_on:
+      - postgres
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
