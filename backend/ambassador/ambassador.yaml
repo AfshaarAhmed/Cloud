@@ -1,0 +1,34 @@
+---
+apiVersion: getambassador.io/v2
+kind: Module
+name: ambassador
+config:
+  diagnostics:
+    enabled: true
+  cors:
+    origins: "*"
+    methods:
+    - POST
+    - GET
+    - OPTIONS
+    - PATCH
+    - DELETE
+    - PUT
+    headers:
+    - Access-Control-Allow-Origin
+    - Content-Type
+    - Authorization
+    - Sentry-Trace
+    exposed_headers: "*"
+    credentials: true
+    max_age: "86400"
+---
+apiVersion: getambassador.io/v2
+kind: AuthService
+name: 
+auth_service: 
+path_prefix: "/"
+allowed_request_headers:
+  -  Origin #towards microsvc 
+allowed_authorization_headers:
+  - "user" #from microsvc
