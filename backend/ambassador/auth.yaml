@@ -1,0 +1,9 @@
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+name: unauthenticated_endpoints
+prefix: /auth/
+rewrite: ""
+service: guard:4000
+bypass_auth: true
+---
