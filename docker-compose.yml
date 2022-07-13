@@ -1,0 +1,64 @@
+version: "3.3"
+
+services:
+  # #api gateway
+  ambassador:
+    image: datawire/emissary:2.0.4
+    # image: datawire/ambassador:1.10.0
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend/ambassador:/ambassador/ambassador-config
+    environment:
+      - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
+
+  # postgres database for backend
+  db:
+    image: postgres
+    container_name: postgresdb
+    restart: always
+    ports: 
+    - $POSTGRES_PORT:$POSTGRES_PORT
+    environment:
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_DB: $AUTH_DB
+    volumes: 
+    - ./backend/pgdata:/var/lib/postgresql/data
+
+# database management tool 
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - $MACHINE_ADMINER_PORT:$ADMINER_PORT
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+# frontend app
+  web:
+    build: web/
+    restart: always
+    ports:
+      - "3000:80"
+    environment:
+      REACT_APP_GW_URL: http://localhost:3000
+
+# backend
+  guard:
+    build: ./backend/auth
+    command: sh ./docker-entrypoint.sh
+    restart: always
+    ports: 
+    - 4000:4000
+    depends_on: 
+    - db
+    environment: 
+      ACCESS_TOKEN_SECRET_KEY: $ACCESS_TOKEN_SECRET_KEY
+      REFRESH_TOKEN_SECRET_KEY: $REFRESH_TOKEN_SECRET_KEY
+      POSTGRES_USERNAME: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_HOST: $DB_HOST
+      POSTGRES_DATABASE: $AUTH_DB
+      GUARD_PORT: 4000
