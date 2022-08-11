@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: backend-deployment
+  template:
+    metadata:
+      labels:
+        app: backend-deployment
+    spec:
+      containers:
+      - name: backend-deployment
+        image: cloud-main_guard
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 4000
+        

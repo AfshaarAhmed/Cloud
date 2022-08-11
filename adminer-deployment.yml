@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer-deployment
+spec:
+  selector:
+    matchLabels:
+      app: adminer-deployment
+  template:
+    metadata:
+      labels:
+        app: adminer-deployment
+    spec:
+      containers:
+      - name: adminer-deployment
+        image: adminer
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8090

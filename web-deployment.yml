@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  selector:
+    matchLabels:
+      app: web-deployment
+  template:
+    metadata:
+      labels:
+        app: web-deployment
+    spec:
+      containers:
+      - name: web-deployment
+        image: cloud-main_web
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+
